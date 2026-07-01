@@ -279,7 +279,7 @@ export default function AdminPage() {
               >
                 <Link href={`/gallery/${img.id}`}>
                   <Image
-                    src={`/uploads/${img.filename}`}
+                    src={`/api/uploads/${img.filename}`}
                     alt={img.title}
                     width={400}
                     height={400}

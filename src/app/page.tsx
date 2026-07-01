@@ -78,7 +78,7 @@ export default function GalleryPage() {
             >
               <div className="relative w-full overflow-hidden bg-white/5">
                 <Image
-                  src={`/uploads/${img.filename}`}
+                  src={`/api/uploads/${img.filename}`}
                   alt={img.title}
                   width={800}
                   height={800}

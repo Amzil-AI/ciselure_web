@@ -131,7 +131,7 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
         <div className="md:col-span-3">
           <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-black/60">
             <Image
-              src={`/uploads/${image.filename}`}
+              src={`/api/uploads/${image.filename}`}
               alt={image.title}
               width={1200}
               height={1200}
