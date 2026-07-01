@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile } from "fs/promises";
 import path from "path";
+import { UPLOAD_DIR } from "@/lib/config";
 
 export async function GET(
   _request: NextRequest,
@@ -10,7 +11,7 @@ export async function GET(
 
   // Security: prevent path traversal
   const safe = path.basename(filename);
-  const uploadDir = process.env.UPLOAD_DIR ?? path.join(process.cwd(), "public", "uploads");
+  const uploadDir = UPLOAD_DIR;
   const filePath = path.join(uploadDir, safe);
 
   try {

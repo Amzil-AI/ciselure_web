@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { UPLOAD_DIR } from "@/lib/config";
 import { writeFile } from "fs/promises";
 import path from "path";
 
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     const ext = file.name.split(".").pop() ?? "jpg";
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const uploadDir = process.env.UPLOAD_DIR ?? path.join(process.cwd(), "public", "uploads");
+    const uploadDir = UPLOAD_DIR;
     await writeFile(path.join(uploadDir, filename), buffer);
 
     const image = await prisma.image.create({
