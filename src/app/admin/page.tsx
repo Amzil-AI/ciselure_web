@@ -121,8 +121,8 @@ export default function AdminPage() {
 
   if (!authenticated) {
     return (
-      <div className="flex min-h-[90vh] items-center justify-center px-6">
-        <div className="w-full max-w-xs">
+      <div style={{ display: "flex", minHeight: "90vh", alignItems: "center", justifyContent: "center", padding: "0 24px" }}>
+        <div style={{ width: "100%", maxWidth: "320px" }}>
           <p className="mb-2 text-center text-[10px] uppercase tracking-[0.4em]" style={{ color: "var(--faint)" }}>
             Admin Access
           </p>
@@ -155,7 +155,8 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", paddingTop: "80px", paddingBottom: "96px" }}>
+    <div style={{ width: "100%", maxWidth: "600px", padding: "0 24px" }}>
       <div className="mb-10 flex items-center justify-between border-b pb-6" style={{ borderColor: "var(--border)" }}>
         <div>
           <p className="mb-1 text-[10px] uppercase tracking-[0.4em]" style={{ color: "var(--faint)" }}>Admin</p>
@@ -257,6 +258,7 @@ export default function AdminPage() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }
