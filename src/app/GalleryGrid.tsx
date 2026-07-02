@@ -11,30 +11,34 @@ export interface GalleryImage {
 }
 
 function formatDate(date: Date) {
-  return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
   if (images.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 py-32 text-center">
+      <div className="flex flex-col items-center gap-4 px-4 py-24 text-center sm:py-32">
         <div className="h-px w-10" style={{ background: "var(--border)" }} />
-        <p className="text-xs uppercase tracking-widest" style={{ color: "var(--faint)" }}>
+        <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--faint)" }}>
           Gallery Coming Soon
         </p>
       </div>
     );
   }
 
-  const gridClass =
+  // 1 image → centered single col, 2 → 2 col max, 3+ → responsive 1/2/3
+  const cols =
     images.length === 1
-      ? "mx-auto grid max-w-sm grid-cols-1 gap-px"
+      ? "grid-cols-1 max-w-sm mx-auto"
       : images.length === 2
-        ? "mx-auto grid max-w-2xl grid-cols-2 gap-px"
-        : "grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-3";
+        ? "grid-cols-2 max-w-2xl mx-auto"
+        : "grid-cols-2 lg:grid-cols-3";
 
   return (
-    <div className={gridClass} style={{ background: "var(--border)" }}>
+    <div
+      className={`grid gap-px ${cols}`}
+      style={{ background: "var(--border)" }}
+    >
       {images.map((img) => (
         <Link
           key={img.id}
@@ -42,31 +46,34 @@ export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
           className="gallery-card group relative block overflow-hidden"
           style={{ background: "var(--bg)" }}
         >
-          {/* Square image crop */}
+          {/* Square crop */}
           <div className="relative aspect-square w-full overflow-hidden" style={{ background: "var(--bg-card)" }}>
             <Image
               src={`/api/uploads/${img.filename}`}
               alt={img.title}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
-              priority={img.id <= 3}
+              priority={img.id <= 4}
             />
             {/* Hover overlay */}
             <div
-              className="gallery-overlay absolute inset-0 flex items-end p-5 opacity-0 transition-opacity duration-300"
-              style={{ background: "linear-gradient(to top, rgba(44,37,32,0.75) 0%, transparent 60%)" }}
+              className="gallery-overlay absolute inset-0 flex items-end p-3 opacity-0 transition-opacity duration-300 sm:p-5"
+              style={{ background: "linear-gradient(to top, rgba(44,37,32,0.78) 0%, transparent 60%)" }}
             >
-              <p className="text-sm font-light text-white">{img.title}</p>
+              <p className="text-xs font-light text-white sm:text-sm">{img.title}</p>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-3" style={{ borderTop: "1px solid var(--border)" }}>
-            <p className="truncate text-sm font-light" style={{ color: "var(--text)" }}>{img.title}</p>
-            <div className="mt-1 flex items-center justify-between text-xs" style={{ color: "var(--faint)" }}>
-              <span>{formatDate(img.createdAt)}</span>
-              <span>{img._count.comments} {img._count.comments === 1 ? "note" : "notes"}</span>
+          <div className="px-3 py-2 sm:px-4 sm:py-3" style={{ borderTop: "1px solid var(--border)" }}>
+            <p className="truncate text-xs font-light sm:text-sm" style={{ color: "var(--text)" }}>
+              {img.title}
+            </p>
+            <div className="mt-1 flex items-center justify-between text-[10px] sm:text-xs" style={{ color: "var(--faint)" }}>
+              <span className="hidden sm:inline">{formatDate(img.createdAt)}</span>
+              <span className="sm:hidden">{img._count.comments} notes</span>
+              <span className="hidden sm:inline">{img._count.comments} {img._count.comments === 1 ? "note" : "notes"}</span>
             </div>
           </div>
         </Link>

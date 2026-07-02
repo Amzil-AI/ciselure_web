@@ -14,21 +14,31 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${geist.variable} antialiased min-h-screen`} style={{ background: "var(--bg)", color: "var(--text)" }}>
-        <header className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: "rgba(247,243,238,0.92)", borderColor: "var(--border)", backdropFilter: "blur(8px)" }}>
-          <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-            <Link href="/" className="text-xs font-light tracking-[0.35em] uppercase transition-opacity hover:opacity-60" style={{ color: "var(--text)" }}>
+        <header
+          className="fixed left-0 right-0 top-0 z-50 border-b"
+          style={{ background: "rgba(247,243,238,0.93)", borderColor: "var(--border)", backdropFilter: "blur(10px)" }}
+        >
+          <div className="mx-auto flex h-12 max-w-6xl items-center justify-between px-4 sm:h-14 sm:px-6">
+            <Link
+              href="/"
+              className="text-[10px] font-light tracking-[0.4em] uppercase transition-opacity hover:opacity-50 sm:text-xs"
+              style={{ color: "var(--text)" }}
+            >
               Ciselure
             </Link>
-            <nav className="flex items-center gap-8 text-xs tracking-widest uppercase" style={{ color: "var(--muted)" }}>
-              <Link href="/" className="transition-colors hover:text-[var(--text)]">Gallery</Link>
-              <Link href="/admin" className="transition-colors hover:text-[var(--text)]">Admin</Link>
+            <nav className="flex items-center gap-5 text-[10px] tracking-widest uppercase sm:gap-8 sm:text-xs" style={{ color: "var(--muted)" }}>
+              <Link href="/" className="transition-opacity hover:opacity-70">Gallery</Link>
+              <Link href="/admin" className="transition-opacity hover:opacity-70">Admin</Link>
             </nav>
           </div>
         </header>
 
-        <main>{children}</main>
+        <main className="w-full">{children}</main>
 
-        <footer className="py-10 text-center text-[11px] tracking-widest uppercase border-t" style={{ borderColor: "var(--border)", color: "var(--faint)" }}>
+        <footer
+          className="mt-4 border-t py-8 text-center text-[10px] tracking-widest uppercase sm:py-10 sm:text-[11px]"
+          style={{ borderColor: "var(--border)", color: "var(--faint)" }}
+        >
           © {new Date().getFullYear()} Ciselure
         </footer>
       </body>

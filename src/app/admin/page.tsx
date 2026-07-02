@@ -155,7 +155,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-20">
+    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
       <div className="mb-10 flex items-center justify-between border-b pb-6" style={{ borderColor: "var(--border)" }}>
         <div>
           <p className="mb-1 text-[10px] uppercase tracking-[0.4em]" style={{ color: "var(--faint)" }}>Admin</p>
@@ -167,7 +167,7 @@ export default function AdminPage() {
       </div>
 
       {/* Upload */}
-      <div className="mb-14 border p-8" style={{ borderColor: "var(--border)" }}>
+      <div className="mb-10 border p-4 sm:mb-14 sm:p-8" style={{ borderColor: "var(--border)" }}>
         <p className="mb-6 text-[10px] uppercase tracking-[0.35em]" style={{ color: "var(--muted)" }}>Upload New Image</p>
         <form onSubmit={handleUpload} className="flex flex-col gap-5">
           <div
@@ -196,7 +196,7 @@ export default function AdminPage() {
             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             <input type="text" placeholder="Title *" value={title} onChange={(e) => setTitle(e.target.value)} required className={inp} style={inpStyle} />
             <input type="text" placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} className={inp} style={inpStyle} />
           </div>
@@ -231,7 +231,7 @@ export default function AdminPage() {
         ) : images.length === 0 ? (
           <p className="text-sm" style={{ color: "var(--faint)" }}>No images yet.</p>
         ) : (
-          <div className="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4" style={{ background: "var(--border)" }}>
+          <div className="grid grid-cols-2 gap-px sm:grid-cols-3 md:grid-cols-4" style={{ background: "var(--border)" }}>
             {images.map((img) => (
               <div key={img.id} className="group relative" style={{ background: "var(--bg)" }}>
                 <Link href={`/gallery/${img.id}`}>
