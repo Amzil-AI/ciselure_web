@@ -27,10 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </nav>
           </div>
         </header>
-        <main className="pt-16">
+        <main className="pt-20">
           {children}
         </main>
-        <footer className="border-t border-white/5 mt-24 py-10 text-center text-stone-600 text-sm">
+        <footer className="mx-auto mt-20 max-w-6xl border-t border-white/5 px-6 py-10 text-center text-sm text-stone-600">
           <p>© {new Date().getFullYear()} Ciselure · AI-generated art</p>
         </footer>
       </body>

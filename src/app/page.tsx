@@ -10,18 +10,18 @@ export default async function GalleryPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16">
-      <div className="mb-16 text-center">
-        <p className="text-xs tracking-[0.4em] text-stone-500 uppercase mb-4">
+    <div className="mx-auto w-full max-w-6xl px-6 pb-20 pt-10 md:pt-14">
+      <section className="mx-auto mb-14 max-w-3xl text-center md:mb-16">
+        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-stone-500">
           AI Art Gallery
         </p>
-        <h1 className="text-5xl md:text-7xl font-extralight tracking-tight text-white mb-6">
+        <h1 className="mb-5 text-4xl font-extralight tracking-tight text-white md:text-5xl">
           Ciselure
         </h1>
-        <p className="text-stone-400 text-lg font-light max-w-xl mx-auto leading-relaxed">
+        <p className="mx-auto max-w-2xl text-base font-light leading-relaxed text-stone-400 md:text-lg">
           A collection of AI-generated imagery. Browse the gallery and leave your impressions.
         </p>
-      </div>
+      </section>
 
       <GalleryGrid images={images} />
     </div>
