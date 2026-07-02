@@ -24,6 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="hover:text-white transition-colors tracking-wide">
                 Gallery
               </Link>
+              <Link href="/admin" className="hover:text-white transition-colors tracking-wide">
+                Admin
+              </Link>
             </nav>
           </div>
         </header>
