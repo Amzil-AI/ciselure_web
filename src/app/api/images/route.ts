@@ -17,7 +17,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "ciselure2024";
+  const adminPassword = process.env.ADMIN_PASSWORD ?? "ciselure2026";
   const authHeader = request.headers.get("x-admin-password");
 
   if (authHeader !== adminPassword) {

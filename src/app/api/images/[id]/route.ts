@@ -29,7 +29,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "ciselure2024";
+  const adminPassword = process.env.ADMIN_PASSWORD ?? "ciselure2026";
   const authHeader = request.headers.get("x-admin-password");
 
   if (authHeader !== adminPassword) {
