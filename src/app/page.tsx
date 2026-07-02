@@ -23,10 +23,6 @@ export default async function GalleryPage() {
           Ciselure
         </h1>
         <div className="mb-6 h-px w-10" style={{ background: "var(--border)" }} />
-        <p className="max-w-sm text-sm font-light leading-loose sm:max-w-md" style={{ color: "var(--muted)" }}>
-          A curated collection of AI-generated imagery.
-          Browse the works and leave your impressions.
-        </p>
       </section>
 
       {/* Gallery */}
