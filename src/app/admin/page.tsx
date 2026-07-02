@@ -45,13 +45,13 @@ export default function AdminPage() {
       });
 
       if (!res.ok) {
-        setAuthError("Incorrect password.");
+        setAuthError("Access denied.");
         return;
       }
 
       setAuthenticated(true);
     } catch {
-      setAuthError("Could not verify password. Please try again.");
+      setAuthError("Could not verify access. Please try again.");
     } finally {
       setLoggingIn(false);
     }
@@ -150,7 +150,7 @@ export default function AdminPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="password"
-              placeholder="Enter admin password"
+              placeholder="Enter studio access"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-white/30 transition-colors text-sm"
@@ -165,9 +165,6 @@ export default function AdminPage() {
               {loggingIn ? "Checking…" : "Enter Studio"}
             </button>
           </form>
-          <p className="text-stone-700 text-xs text-center mt-6">
-            Use the admin password set in your Railway environment variables.
-          </p>
         </div>
       </div>
     );

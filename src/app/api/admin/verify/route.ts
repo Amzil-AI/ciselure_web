@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const adminPassword = process.env.ADMIN_PASSWORD ?? "ciselure2026";
 
     if (password !== adminPassword) {
-      return NextResponse.json({ error: "Incorrect password." }, { status: 401 });
+      return NextResponse.json({ error: "Access denied." }, { status: 401 });
     }
 
     return NextResponse.json({ ok: true });
