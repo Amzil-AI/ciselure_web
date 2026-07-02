@@ -12,6 +12,8 @@ interface GalleryImage {
   _count: { comments: number };
 }
 
+const inp = "w-full border px-4 py-3 text-sm font-light outline-none transition-colors focus:border-[var(--text)] rounded-none";
+const inpStyle = { background: "var(--bg)", borderColor: "var(--border)", color: "var(--text)" };
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
@@ -21,7 +23,6 @@ export default function AdminPage() {
 
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -29,29 +30,22 @@ export default function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
-
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoggingIn(true);
     setAuthError("");
-
     try {
       const res = await fetch("/api/admin/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
-
-      if (!res.ok) {
-        setAuthError("Access denied.");
-        return;
-      }
-
+      if (!res.ok) { setAuthError("Access denied."); return; }
       setAuthenticated(true);
     } catch {
-      setAuthError("Could not verify access. Please try again.");
+      setAuthError("Could not verify. Please try again.");
     } finally {
       setLoggingIn(false);
     }
@@ -87,9 +81,7 @@ export default function AdminPage() {
     }
   }
 
-  useEffect(() => {
-    if (authenticated) loadImages();
-  }, [authenticated]);
+  useEffect(() => { if (authenticated) loadImages(); }, [authenticated]);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
@@ -97,24 +89,19 @@ export default function AdminPage() {
     setUploading(true);
     setUploadError("");
     setUploadSuccess("");
-
     const formData = new FormData();
     formData.append("file", file);
     formData.append("title", title.trim());
     if (description.trim()) formData.append("description", description.trim());
-
     try {
       const res = await fetch("/api/images", {
         method: "POST",
         headers: { "x-admin-password": password },
         body: formData,
       });
-      if (!res.ok) throw new Error("Upload failed");
-      setUploadSuccess("Image uploaded successfully!");
-      setTitle("");
-      setDescription("");
-      setFile(null);
-      setPreview(null);
+      if (!res.ok) throw new Error();
+      setUploadSuccess("Uploaded successfully.");
+      setTitle(""); setDescription(""); setFile(null); setPreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       loadImages();
     } catch {
@@ -125,44 +112,41 @@ export default function AdminPage() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm("Delete this image and all its comments?")) return;
+    if (!confirm("Delete this image and all its notes?")) return;
     try {
-      await fetch(`/api/images/${id}`, {
-        method: "DELETE",
-        headers: { "x-admin-password": password },
-      });
+      await fetch(`/api/images/${id}`, { method: "DELETE", headers: { "x-admin-password": password } });
       setImages((prev) => prev.filter((img) => img.id !== id));
-    } catch {
-      alert("Failed to delete image.");
-    }
+    } catch { alert("Failed to delete."); }
   }
 
   if (!authenticated) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center px-6">
-        <div className="w-full max-w-sm">
-          <p className="text-xs tracking-[0.4em] text-stone-500 uppercase text-center mb-2">
+      <div className="flex min-h-[90vh] items-center justify-center px-6">
+        <div className="w-full max-w-xs">
+          <p className="mb-2 text-center text-[10px] uppercase tracking-[0.4em]" style={{ color: "var(--faint)" }}>
             Admin Access
           </p>
-          <h1 className="text-3xl font-light text-white text-center mb-8">
+          <h1 className="mb-8 text-center text-2xl font-thin tracking-widest" style={{ color: "var(--text)" }}>
             Ciselure Studio
           </h1>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <input
               type="password"
-              placeholder="Enter studio access"
+              placeholder="Studio access"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-white/30 transition-colors text-sm"
+              className={inp}
+              style={inpStyle}
               autoFocus
             />
-            {authError && <p className="text-red-400 text-xs">{authError}</p>}
+            {authError && <p className="text-xs text-red-500">{authError}</p>}
             <button
               type="submit"
               disabled={loggingIn || !password}
-              className="w-full py-3 rounded-lg bg-white text-black font-medium text-sm hover:bg-stone-100 transition-colors disabled:opacity-40"
+              className="border py-3 text-xs uppercase tracking-widest transition-colors disabled:opacity-40"
+              style={{ borderColor: "var(--text)", color: "var(--text)" }}
             >
-              {loggingIn ? "Checking…" : "Enter Studio"}
+              {loggingIn ? "Checking…" : "Enter"}
             </button>
           </form>
         </div>
@@ -171,144 +155,99 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12">
-      <div className="flex items-center justify-between mb-10">
+    <div className="mx-auto max-w-5xl px-6 py-20">
+      <div className="mb-10 flex items-center justify-between border-b pb-6" style={{ borderColor: "var(--border)" }}>
         <div>
-          <p className="text-xs tracking-[0.4em] text-stone-500 uppercase mb-1">Admin</p>
-          <h1 className="text-3xl font-light text-white">Studio</h1>
+          <p className="mb-1 text-[10px] uppercase tracking-[0.4em]" style={{ color: "var(--faint)" }}>Admin</p>
+          <h1 className="text-2xl font-thin tracking-widest" style={{ color: "var(--text)" }}>Studio</h1>
         </div>
-        <Link
-          href="/"
-          className="text-sm text-stone-500 hover:text-white transition-colors"
-        >
-          ← View gallery
+        <Link href="/" className="text-xs uppercase tracking-widest transition-opacity hover:opacity-60" style={{ color: "var(--muted)" }}>
+          ← Gallery
         </Link>
       </div>
 
-      {/* Upload Form */}
-      <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-8 mb-12">
-        <h2 className="text-sm uppercase tracking-[0.2em] text-stone-400 mb-6">
-          Upload New Image
-        </h2>
-        <form onSubmit={handleUpload} className="space-y-5">
-          {/* Drop Zone */}
+      {/* Upload */}
+      <div className="mb-14 border p-8" style={{ borderColor: "var(--border)" }}>
+        <p className="mb-6 text-[10px] uppercase tracking-[0.35em]" style={{ color: "var(--muted)" }}>Upload New Image</p>
+        <form onSubmit={handleUpload} className="flex flex-col gap-5">
           <div
-            className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center cursor-pointer hover:border-white/20 transition-colors relative"
+            className="cursor-pointer border-2 border-dashed p-8 text-center transition-colors"
+            style={{ borderColor: "var(--border)" }}
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
             onClick={() => fileInputRef.current?.click()}
           >
             {preview ? (
               <div className="flex flex-col items-center gap-3">
-                <Image
-                  src={preview}
-                  alt="Preview"
-                  width={400}
-                  height={300}
-                  className="max-h-56 w-auto object-contain rounded-lg"
-                />
-                <p className="text-stone-500 text-sm">{file?.name}</p>
+                <Image src={preview} alt="Preview" width={400} height={300} className="max-h-52 w-auto object-contain" />
+                <p className="text-xs" style={{ color: "var(--muted)" }}>{file?.name}</p>
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setFile(null);
-                    setPreview(null);
-                    if (fileInputRef.current) fileInputRef.current.value = "";
-                  }}
-                  className="text-xs text-stone-600 hover:text-red-400 transition-colors"
-                >
-                  Remove
-                </button>
+                  onClick={(e) => { e.stopPropagation(); setFile(null); setPreview(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+                  className="text-xs underline" style={{ color: "var(--faint)" }}
+                >Remove</button>
               </div>
             ) : (
               <>
-                <div className="text-4xl mb-3 opacity-20">⊕</div>
-                <p className="text-stone-500 text-sm">
-                  Drag & drop an image, or click to browse
-                </p>
-                <p className="text-stone-700 text-xs mt-1">JPG, PNG, WEBP, GIF</p>
+                <p className="text-sm font-light" style={{ color: "var(--muted)" }}>Drag & drop or click to browse</p>
+                <p className="mt-1 text-xs" style={{ color: "var(--faint)" }}>JPG · PNG · WEBP · GIF</p>
               </>
             )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Image title *"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-white/30 transition-colors text-sm"
-            />
-            <input
-              type="text"
-              placeholder="Description (optional)"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-white/30 transition-colors text-sm"
-            />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <input type="text" placeholder="Title *" value={title} onChange={(e) => setTitle(e.target.value)} required className={inp} style={inpStyle} />
+            <input type="text" placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} className={inp} style={inpStyle} />
           </div>
 
-          {uploadError && <p className="text-red-400 text-xs">{uploadError}</p>}
-          {uploadSuccess && <p className="text-emerald-400 text-xs">{uploadSuccess}</p>}
+          {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+          {uploadSuccess && <p className="text-xs text-green-700">{uploadSuccess}</p>}
 
-          <button
-            type="submit"
-            disabled={uploading || !file || !title.trim()}
-            className="px-8 py-3 rounded-lg bg-white text-black font-medium text-sm hover:bg-stone-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {uploading ? "Uploading…" : "Upload to Gallery"}
-          </button>
+          <div>
+            <button
+              type="submit"
+              disabled={uploading || !file || !title.trim()}
+              className="border px-10 py-3 text-xs uppercase tracking-widest transition-colors disabled:opacity-40"
+              style={{ borderColor: "var(--text)", color: "var(--text)" }}
+            >
+              {uploading ? "Uploading…" : "Upload"}
+            </button>
+          </div>
         </form>
       </div>
 
-      {/* Existing Images */}
+      {/* Manage */}
       <div>
-        <h2 className="text-sm uppercase tracking-[0.2em] text-stone-400 mb-6">
+        <p className="mb-6 text-[10px] uppercase tracking-[0.35em]" style={{ color: "var(--muted)" }}>
           Manage Images ({images.length})
-        </h2>
+        </p>
         {loadingImages ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-px" style={{ background: "var(--border)" }}>
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="aspect-square bg-white/5 rounded-xl animate-pulse" />
+              <div key={i} className="aspect-square animate-pulse" style={{ background: "var(--bg-card)" }} />
             ))}
           </div>
         ) : images.length === 0 ? (
-          <p className="text-stone-600 text-sm">No images uploaded yet.</p>
+          <p className="text-sm" style={{ color: "var(--faint)" }}>No images yet.</p>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4" style={{ background: "var(--border)" }}>
             {images.map((img) => (
-              <div
-                key={img.id}
-                className="group relative bg-white/[0.03] border border-white/5 rounded-xl overflow-hidden"
-              >
+              <div key={img.id} className="group relative" style={{ background: "var(--bg)" }}>
                 <Link href={`/gallery/${img.id}`}>
                   <Image
                     src={`/api/uploads/${img.filename}`}
                     alt={img.title}
                     width={400}
                     height={400}
-                    className="w-full aspect-square object-cover group-hover:opacity-75 transition-opacity"
+                    className="aspect-square w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
                   />
                 </Link>
-                <div className="p-3">
-                  <p className="text-white text-sm font-medium truncate">{img.title}</p>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-stone-500 text-xs">
-                      💬 {img._count.comments} comments
-                    </span>
-                    <button
-                      onClick={() => handleDelete(img.id)}
-                      className="text-xs text-stone-700 hover:text-red-400 transition-colors"
-                    >
+                <div className="px-3 py-2" style={{ borderTop: "1px solid var(--border)" }}>
+                  <p className="truncate text-xs font-light" style={{ color: "var(--text)" }}>{img.title}</p>
+                  <div className="mt-1 flex justify-between text-xs" style={{ color: "var(--faint)" }}>
+                    <span>{img._count.comments} notes</span>
+                    <button onClick={() => handleDelete(img.id)} className="underline hover:text-red-500 transition-colors">
                       Delete
                     </button>
                   </div>

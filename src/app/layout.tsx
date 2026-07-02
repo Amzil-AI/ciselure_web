@@ -13,25 +13,22 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geist.variable} antialiased bg-[#0a0a0a] text-stone-100 min-h-screen`}>
-        <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-sm border-b border-white/[0.04]">
+      <body className={`${geist.variable} antialiased min-h-screen`} style={{ background: "var(--bg)", color: "var(--text)" }}>
+        <header className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: "rgba(247,243,238,0.92)", borderColor: "var(--border)", backdropFilter: "blur(8px)" }}>
           <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-            <Link
-              href="/"
-              className="text-xs font-light tracking-[0.35em] text-stone-400 hover:text-white transition-colors uppercase"
-            >
+            <Link href="/" className="text-xs font-light tracking-[0.35em] uppercase transition-opacity hover:opacity-60" style={{ color: "var(--text)" }}>
               Ciselure
             </Link>
-            <nav className="flex items-center gap-8 text-xs tracking-widest text-stone-600 uppercase">
-              <Link href="/" className="hover:text-white transition-colors">Gallery</Link>
-              <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
+            <nav className="flex items-center gap-8 text-xs tracking-widest uppercase" style={{ color: "var(--muted)" }}>
+              <Link href="/" className="transition-colors hover:text-[var(--text)]">Gallery</Link>
+              <Link href="/admin" className="transition-colors hover:text-[var(--text)]">Admin</Link>
             </nav>
           </div>
         </header>
 
         <main>{children}</main>
 
-        <footer className="border-t border-white/[0.04] py-8 text-center text-[11px] tracking-widest text-stone-700 uppercase">
+        <footer className="py-10 text-center text-[11px] tracking-widest uppercase border-t" style={{ borderColor: "var(--border)", color: "var(--faint)" }}>
           © {new Date().getFullYear()} Ciselure
         </footer>
       </body>

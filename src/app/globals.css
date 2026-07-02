@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+:root {
+  --bg:        #F7F3EE;
+  --bg-card:   #F2EDE6;
+  --border:    #E0D8CF;
+  --text:      #2C2520;
+  --muted:     #9A8C82;
+  --faint:     #C4B9AF;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -12,28 +21,18 @@ html {
 
 body {
   font-family: var(--font-geist), system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: #0a0a0a;
-}
-::-webkit-scrollbar-thumb {
-  background: #222;
-  border-radius: 2px;
-}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-.gallery-card:hover .gallery-overlay {
-  opacity: 1;
-}
+.gallery-card:hover .gallery-overlay { opacity: 1; }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-.fade-in {
-  animation: fadeIn 0.5s ease forwards;
-}
+.fade-in { animation: fadeIn 0.4s ease forwards; }

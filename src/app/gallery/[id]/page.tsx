@@ -21,29 +21,21 @@ interface ImageDetail {
 }
 
 function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  return new Date(dateStr).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
 function formatTime(dateStr: string) {
-  return new Date(dateStr).toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  return new Date(dateStr).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
 }
+
+const inputClass = "w-full rounded-none border px-4 py-3 text-sm font-light outline-none transition-colors focus:border-[var(--text)]";
+const inputStyle = { background: "var(--bg)", borderColor: "var(--border)", color: "var(--text)" };
 
 export default function ImagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [image, setImage] = useState<ImageDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
-
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -54,10 +46,7 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
     fetch(`/api/images/${id}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.id) {
-          setImage(data);
-          setComments(data.comments ?? []);
-        }
+        if (data.id) { setImage(data); setComments(data.comments ?? []); }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -77,12 +66,11 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
       if (!res.ok) throw new Error("Failed");
       const newComment = await res.json();
       setComments((prev) => [newComment, ...prev]);
-      setName("");
-      setContent("");
+      setName(""); setContent("");
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch {
-      setError("Failed to post feedback. Please try again.");
+      setError("Failed to post. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -90,46 +78,34 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-6 py-16 animate-pulse">
-        <div className="h-6 bg-white/10 rounded w-32 mb-8" />
-        <div className="grid md:grid-cols-2 gap-12">
-          <div className="aspect-square bg-white/5 rounded-xl" />
-          <div className="space-y-4">
-            <div className="h-8 bg-white/10 rounded w-3/4" />
-            <div className="h-4 bg-white/5 rounded w-full" />
-          </div>
-        </div>
+      <div className="mx-auto max-w-6xl animate-pulse px-6 py-32">
+        <div className="h-4 w-24 rounded" style={{ background: "var(--border)" }} />
       </div>
     );
   }
 
   if (!image) {
     return (
-      <div className="max-w-5xl mx-auto px-6 py-32 text-center">
-        <p className="text-stone-500 text-xl">Image not found.</p>
-        <Link href="/" className="mt-4 inline-block text-stone-400 hover:text-white transition-colors">
-          ← Back to gallery
+      <div className="mx-auto max-w-6xl px-6 py-32 text-center">
+        <p className="text-sm" style={{ color: "var(--muted)" }}>Image not found.</p>
+        <Link href="/" className="mt-4 inline-block text-xs uppercase tracking-widest underline" style={{ color: "var(--muted)" }}>
+          ← Back
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12">
-      {/* Back */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-stone-500 hover:text-white transition-colors text-sm mb-10 group"
-      >
-        <span className="group-hover:-translate-x-1 transition-transform">←</span>
-        Back to gallery
+    <div className="mx-auto max-w-6xl px-6 py-20">
+      <Link href="/" className="mb-10 inline-flex items-center gap-2 text-xs uppercase tracking-widest transition-opacity hover:opacity-60" style={{ color: "var(--muted)" }}>
+        ← Gallery
       </Link>
 
       {/* Image + Info */}
-      <div className="grid md:grid-cols-5 gap-12 mb-16">
+      <div className="grid gap-12 md:grid-cols-5 mb-20">
         {/* Image */}
         <div className="md:col-span-3">
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-black/60">
+          <div className="overflow-hidden border" style={{ borderColor: "var(--border)" }}>
             <Image
               src={`/api/uploads/${image.filename}`}
               alt={image.title}
@@ -142,30 +118,28 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
         </div>
 
         {/* Details */}
-        <div className="md:col-span-2 flex flex-col">
-          <div className="mb-2">
-            <p className="text-xs tracking-[0.3em] text-stone-500 uppercase mb-3">
+        <div className="md:col-span-2 flex flex-col gap-8">
+          <div>
+            <p className="mb-3 text-[10px] uppercase tracking-[0.4em]" style={{ color: "var(--faint)" }}>
               {formatDate(image.createdAt)}
             </p>
-            <h1 className="text-3xl md:text-4xl font-light text-white leading-tight mb-4">
+            <h1 className="mb-4 text-2xl font-thin tracking-wide md:text-3xl" style={{ color: "var(--text)" }}>
               {image.title}
             </h1>
             {image.description && (
-              <p className="text-stone-400 leading-relaxed text-base">{image.description}</p>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{image.description}</p>
             )}
           </div>
 
-          <div className="mt-6 pt-6 border-t border-white/5">
-            <p className="text-xs text-stone-500 uppercase tracking-widest mb-1">Comments</p>
-            <p className="text-2xl font-light text-white">{comments.length}</p>
+          <div className="border-t pt-6" style={{ borderColor: "var(--border)" }}>
+            <p className="mb-1 text-[10px] uppercase tracking-widest" style={{ color: "var(--faint)" }}>Impressions</p>
+            <p className="text-3xl font-thin" style={{ color: "var(--text)" }}>{comments.length}</p>
           </div>
 
           {/* Feedback Form */}
-          <div className="mt-auto pt-10">
-            <h2 className="text-sm uppercase tracking-[0.2em] text-stone-400 mb-5">
-              Leave Feedback
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="mt-auto">
+            <p className="mb-4 text-[10px] uppercase tracking-widest" style={{ color: "var(--muted)" }}>Leave a note</p>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <input
                 type="text"
                 placeholder="Your name"
@@ -173,55 +147,50 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
                 onChange={(e) => setName(e.target.value)}
                 maxLength={60}
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-white/30 transition-colors text-sm"
+                className={inputClass}
+                style={inputStyle}
               />
               <textarea
-                placeholder="Share your thoughts on this piece…"
+                placeholder="Share your thoughts…"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 maxLength={500}
                 rows={4}
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-white/30 transition-colors text-sm resize-none"
+                className={`${inputClass} resize-none`}
+                style={inputStyle}
               />
-              {error && <p className="text-red-400 text-xs">{error}</p>}
-              {success && (
-                <p className="text-emerald-400 text-xs">Feedback posted! Thank you.</p>
-              )}
+              {error && <p className="text-xs text-red-500">{error}</p>}
+              {success && <p className="text-xs text-green-700">Note posted. Thank you.</p>}
               <button
                 type="submit"
                 disabled={submitting || !name.trim() || !content.trim()}
-                className="w-full py-3 rounded-lg bg-white text-black font-medium text-sm hover:bg-stone-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="border py-3 text-xs uppercase tracking-widest transition-colors disabled:opacity-40"
+                style={{ borderColor: "var(--text)", color: "var(--text)", background: "transparent" }}
+                onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = "var(--text)"; (e.target as HTMLButtonElement).style.color = "var(--bg)"; }}
+                onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = "transparent"; (e.target as HTMLButtonElement).style.color = "var(--text)"; }}
               >
-                {submitting ? "Posting…" : "Post Feedback"}
+                {submitting ? "Posting…" : "Post Note"}
               </button>
             </form>
           </div>
         </div>
       </div>
 
-      {/* Comments List */}
+      {/* Comments */}
       {comments.length > 0 && (
         <div>
-          <h2 className="text-xs uppercase tracking-[0.3em] text-stone-500 mb-8">
-            All Feedback ({comments.length})
-          </h2>
-          <div className="space-y-4">
+          <p className="mb-8 text-[10px] uppercase tracking-[0.4em]" style={{ color: "var(--faint)" }}>
+            All Notes ({comments.length})
+          </p>
+          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
             {comments.map((comment) => (
-              <div
-                key={comment.id}
-                className="bg-white/[0.03] border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-stone-600 to-stone-800 flex items-center justify-center text-xs font-medium text-stone-300">
-                      {comment.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="text-white font-medium text-sm">{comment.name}</span>
-                  </div>
-                  <span className="text-stone-600 text-xs">{formatTime(comment.createdAt)}</span>
+              <div key={comment.id} className="py-6">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-sm font-medium" style={{ color: "var(--text)" }}>{comment.name}</span>
+                  <span className="text-xs" style={{ color: "var(--faint)" }}>{formatTime(comment.createdAt)}</span>
                 </div>
-                <p className="text-stone-300 text-sm leading-relaxed">{comment.content}</p>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{comment.content}</p>
               </div>
             ))}
           </div>
