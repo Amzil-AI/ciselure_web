@@ -78,23 +78,26 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl animate-pulse px-4 py-32 sm:px-6">
-        <div className="h-3 w-20 rounded" style={{ background: "var(--border)" }} />
+      <div style={{ display: "flex", justifyContent: "center", padding: "128px 24px" }}>
+        <div style={{ width: "100%", maxWidth: "520px" }}>
+          <div style={{ height: "12px", width: "80px", borderRadius: "4px", background: "var(--border)" }} />
+        </div>
       </div>
     );
   }
 
   if (!image) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-32 text-center sm:px-6">
-        <p className="text-sm" style={{ color: "var(--muted)" }}>Image not found.</p>
-        <Link href="/" className="mt-4 inline-block text-xs uppercase tracking-widest underline" style={{ color: "var(--muted)" }}>← Back</Link>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", textAlign: "center", gap: "16px" }}>
+        <p style={{ fontSize: "13px", color: "var(--muted)" }}>Image not found.</p>
+        <Link href="/" style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--muted)", textDecoration: "underline" }}>← Back</Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", paddingTop: "80px", paddingBottom: "96px" }}>
+    <div style={{ width: "100%", maxWidth: "520px", padding: "0 24px" }}>
       {/* Back */}
       <Link
         href="/"
@@ -104,103 +107,89 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
         ← Gallery
       </Link>
 
-      {/* Image + Info — stacks on mobile, side-by-side on md+ */}
-      <div className="grid gap-8 sm:gap-10 md:grid-cols-5 md:gap-12 mb-16 sm:mb-20">
-        {/* Image */}
-        <div className="md:col-span-3">
-          <div className="overflow-hidden border" style={{ borderColor: "var(--border)" }}>
-            <Image
-              src={`/api/uploads/${image.filename}`}
-              alt={image.title}
-              width={1200}
-              height={1200}
-              className="h-auto w-full object-contain"
-              priority
-            />
-          </div>
+      {/* Image */}
+      <div style={{ width: "100%", border: "1px solid var(--border)", overflow: "hidden", marginBottom: "20px" }}>
+        <Image
+          src={`/api/uploads/${image.filename}`}
+          alt={image.title}
+          width={800}
+          height={800}
+          style={{ width: "100%", height: "auto", display: "block" }}
+          priority
+        />
+      </div>
+
+      {/* Title + meta */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px", marginBottom: "24px" }}>
+        <div>
+          <p style={{ fontSize: "15px", fontWeight: 300, color: "var(--text)" }}>{image.title}</p>
+          {image.description && (
+            <p style={{ fontSize: "11px", color: "var(--muted)", marginTop: "4px", lineHeight: 1.6 }}>{image.description}</p>
+          )}
         </div>
-
-        {/* Details */}
-        <div className="flex flex-col gap-6 md:col-span-2">
-          <div>
-            <p className="mb-2 text-[9px] uppercase tracking-[0.4em] sm:text-[10px]" style={{ color: "var(--faint)" }}>
-              {formatDate(image.createdAt)}
-            </p>
-            <h1 className="mb-3 text-xl font-thin tracking-wide sm:text-2xl md:text-3xl" style={{ color: "var(--text)" }}>
-              {image.title}
-            </h1>
-            {image.description && (
-              <p className="text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted)" }}>{image.description}</p>
-            )}
-          </div>
-
-          <div className="border-t pt-5" style={{ borderColor: "var(--border)" }}>
-            <p className="mb-1 text-[9px] uppercase tracking-widest sm:text-[10px]" style={{ color: "var(--faint)" }}>Impressions</p>
-            <p className="text-2xl font-thin sm:text-3xl" style={{ color: "var(--text)" }}>{comments.length}</p>
-          </div>
-
-          {/* Feedback Form */}
-          <div>
-            <p className="mb-3 text-[9px] uppercase tracking-widest sm:mb-4 sm:text-[10px]" style={{ color: "var(--muted)" }}>
-              Leave a note
-            </p>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-              <input
-                type="text"
-                placeholder="Your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={60}
-                required
-                className={inpClass}
-                style={inpStyle}
-              />
-              <textarea
-                placeholder="Share your thoughts…"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                maxLength={500}
-                rows={3}
-                required
-                className={`${inpClass} resize-none`}
-                style={inpStyle}
-              />
-              {error && <p className="text-xs text-red-500">{error}</p>}
-              {success && <p className="text-xs text-green-700">Note posted. Thank you.</p>}
-              <button
-                type="submit"
-                disabled={submitting || !name.trim() || !content.trim()}
-                className="border py-2.5 text-[10px] uppercase tracking-widest transition-all disabled:opacity-40 sm:py-3 sm:text-xs"
-                style={{ borderColor: "var(--text)", color: "var(--text)", background: "transparent" }}
-                onMouseEnter={e => { const b = e.currentTarget; b.style.background = "var(--text)"; b.style.color = "var(--bg)"; }}
-                onMouseLeave={e => { const b = e.currentTarget; b.style.background = "transparent"; b.style.color = "var(--text)"; }}
-              >
-                {submitting ? "Posting…" : "Post Note"}
-              </button>
-            </form>
-          </div>
+        <div style={{ textAlign: "right", flexShrink: 0 }}>
+          <p style={{ fontSize: "10px", color: "var(--faint)" }}>{formatDate(image.createdAt)}</p>
+          <p style={{ fontSize: "10px", color: "var(--faint)", marginTop: "2px" }}>{comments.length} {comments.length === 1 ? "note" : "notes"}</p>
         </div>
       </div>
+
+      {/* Divider */}
+      <div style={{ height: "1px", background: "var(--border)", marginBottom: "24px" }} />
+
+      {/* Feedback Form */}
+      <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--muted)", marginBottom: "12px" }}>Leave a note</p>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "40px" }}>
+        <input
+          type="text"
+          placeholder="Your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          maxLength={60}
+          required
+          className={inpClass}
+          style={inpStyle}
+        />
+        <textarea
+          placeholder="Share your thoughts…"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          maxLength={500}
+          rows={3}
+          required
+          className={`${inpClass} resize-none`}
+          style={inpStyle}
+        />
+        {error && <p style={{ fontSize: "11px", color: "red" }}>{error}</p>}
+        {success && <p style={{ fontSize: "11px", color: "green" }}>Note posted. Thank you.</p>}
+        <button
+          type="submit"
+          disabled={submitting || !name.trim() || !content.trim()}
+          style={{ border: "1px solid var(--text)", color: "var(--text)", background: "transparent", padding: "10px", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", cursor: "pointer", opacity: (submitting || !name.trim() || !content.trim()) ? 0.4 : 1 }}
+          onMouseEnter={e => { const b = e.currentTarget; b.style.background = "var(--text)"; b.style.color = "var(--bg)"; }}
+          onMouseLeave={e => { const b = e.currentTarget; b.style.background = "transparent"; b.style.color = "var(--text)"; }}
+        >
+          {submitting ? "Posting…" : "Post Note"}
+        </button>
+      </form>
 
       {/* Comments */}
       {comments.length > 0 && (
         <div>
-          <p className="mb-6 text-[9px] uppercase tracking-[0.4em] sm:mb-8 sm:text-[10px]" style={{ color: "var(--faint)" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--faint)", marginBottom: "16px" }}>
             All Notes ({comments.length})
           </p>
-          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-            {comments.map((comment) => (
-              <div key={comment.id} className="py-5 sm:py-6">
-                <div className="mb-2 flex items-start justify-between gap-4 sm:mb-3">
-                  <span className="text-sm font-medium" style={{ color: "var(--text)" }}>{comment.name}</span>
-                  <span className="shrink-0 text-[10px] sm:text-xs" style={{ color: "var(--faint)" }}>{formatTime(comment.createdAt)}</span>
-                </div>
-                <p className="text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted)" }}>{comment.content}</p>
+          {comments.map((comment, i) => (
+            <div key={comment.id} style={{ borderTop: i === 0 ? "1px solid var(--border)" : undefined, paddingTop: "16px", paddingBottom: "16px", borderBottom: "1px solid var(--border)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--text)" }}>{comment.name}</span>
+                <span style={{ fontSize: "10px", color: "var(--faint)", flexShrink: 0 }}>{formatTime(comment.createdAt)}</span>
               </div>
-            ))}
-          </div>
+              <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.7 }}>{comment.content}</p>
+            </div>
+          ))}
         </div>
       )}
+    </div>
     </div>
   );
 }
