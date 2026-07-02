@@ -27,7 +27,7 @@ export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
   }
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-10">
+    <div className="flex flex-col gap-10">
       {images.map((img) => (
         <Link
           key={img.id}
