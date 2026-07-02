@@ -10,14 +10,10 @@ export default async function GalleryPage() {
   });
 
   return (
-    <div className="mx-auto w-full max-w-lg px-6">
-      {/* Spacer for fixed header */}
-      <div className="pt-20 sm:pt-24" />
-
-      {/* Gallery */}
-      <section className="pb-24">
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", paddingTop: "80px", paddingBottom: "96px" }}>
+      <div style={{ width: "100%", maxWidth: "520px", padding: "0 24px" }}>
         <GalleryGrid images={images} />
-      </section>
+      </div>
     </div>
   );
 }

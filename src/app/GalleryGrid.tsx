@@ -17,51 +17,40 @@ function formatDate(date: Date) {
 export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
   if (images.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 py-32 text-center">
-        <div className="h-px w-10" style={{ background: "var(--border)" }} />
-        <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--faint)" }}>
-          Gallery Coming Soon
-        </p>
+      <div style={{ textAlign: "center", padding: "80px 0", color: "var(--faint)", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+        Gallery coming soon.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
       {images.map((img) => (
-        <Link
-          key={img.id}
-          href={`/gallery/${img.id}`}
-          className="gallery-card group block"
-        >
+        <Link key={img.id} href={`/gallery/${img.id}`} style={{ display: "block", textDecoration: "none" }} className="gallery-card group">
           {/* Image */}
-          <div
-            className="relative w-full overflow-hidden border"
-            style={{ borderColor: "var(--border)", background: "var(--bg-card)" }}
-          >
+          <div style={{ width: "100%", border: "1px solid var(--border)", overflow: "hidden", background: "var(--bg-card)" }}>
             <Image
               src={`/api/uploads/${img.filename}`}
               alt={img.title}
               width={800}
               height={800}
-              className="h-auto w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              style={{ width: "100%", height: "auto", display: "block", transition: "transform 0.6s ease" }}
+              className="group-hover:scale-[1.02]"
               priority={img.id <= 2}
             />
           </div>
 
           {/* Caption */}
-          <div className="mt-3 flex items-start justify-between gap-4 px-1">
+          <div style={{ marginTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px" }}>
             <div>
-              <p className="text-sm font-light" style={{ color: "var(--text)" }}>{img.title}</p>
+              <p style={{ fontSize: "13px", fontWeight: 300, color: "var(--text)" }}>{img.title}</p>
               {img.description && (
-                <p className="mt-0.5 text-xs font-light leading-relaxed" style={{ color: "var(--muted)" }}>
-                  {img.description}
-                </p>
+                <p style={{ fontSize: "11px", color: "var(--muted)", marginTop: "3px", lineHeight: 1.6 }}>{img.description}</p>
               )}
             </div>
-            <div className="shrink-0 text-right">
-              <p className="text-[10px]" style={{ color: "var(--faint)" }}>{formatDate(img.createdAt)}</p>
-              <p className="mt-0.5 text-[10px]" style={{ color: "var(--faint)" }}>
+            <div style={{ textAlign: "right", flexShrink: 0 }}>
+              <p style={{ fontSize: "10px", color: "var(--faint)" }}>{formatDate(img.createdAt)}</p>
+              <p style={{ fontSize: "10px", color: "var(--faint)", marginTop: "2px" }}>
                 {img._count.comments} {img._count.comments === 1 ? "note" : "notes"}
               </p>
             </div>
