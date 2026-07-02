@@ -12,12 +12,12 @@ interface GalleryImage {
   _count: { comments: number };
 }
 
-const DEFAULT_PASS = "ciselure2024";
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [authError, setAuthError] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
 
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
@@ -32,13 +32,28 @@ export default function AdminPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (password === (process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? DEFAULT_PASS)) {
+    setLoggingIn(true);
+    setAuthError("");
+
+    try {
+      const res = await fetch("/api/admin/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      if (!res.ok) {
+        setAuthError("Incorrect password.");
+        return;
+      }
+
       setAuthenticated(true);
-      setAuthError("");
-    } else {
-      setAuthError("Incorrect password.");
+    } catch {
+      setAuthError("Could not verify password. Please try again.");
+    } finally {
+      setLoggingIn(false);
     }
   }
 
@@ -144,13 +159,14 @@ export default function AdminPage() {
             {authError && <p className="text-red-400 text-xs">{authError}</p>}
             <button
               type="submit"
-              className="w-full py-3 rounded-lg bg-white text-black font-medium text-sm hover:bg-stone-100 transition-colors"
+              disabled={loggingIn || !password}
+              className="w-full py-3 rounded-lg bg-white text-black font-medium text-sm hover:bg-stone-100 transition-colors disabled:opacity-40"
             >
-              Enter Studio
+              {loggingIn ? "Checking…" : "Enter Studio"}
             </button>
           </form>
           <p className="text-stone-700 text-xs text-center mt-6">
-            Default password: <code className="text-stone-500">ciselure2024</code>
+            Use the admin password set in your Railway environment variables.
           </p>
         </div>
       </div>
