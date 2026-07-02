@@ -96,8 +96,8 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", paddingTop: "80px", paddingBottom: "96px" }}>
-    <div style={{ width: "100%", maxWidth: "520px", padding: "0 24px" }}>
+    <div style={{ width: "100%", paddingTop: "80px", paddingBottom: "96px" }}>
+    <div style={{ maxWidth: "520px", margin: "0 auto", padding: "0 24px" }}>
       {/* Back */}
       <Link
         href="/"
