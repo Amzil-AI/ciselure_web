@@ -35,7 +35,7 @@ export default function SuggestionPopup() {
         setSuccess(false);
       }, 2000);
     } catch {
-      setError("Failed to submit. Please try again.");
+      setError("error");
     } finally {
       setSubmitting(false);
     }
@@ -67,7 +67,7 @@ export default function SuggestionPopup() {
         onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.8"; }}
         onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
       >
-        Suggest an image
+        Suggérer une image
       </button>
 
       {/* Modal */}
@@ -97,7 +97,7 @@ export default function SuggestionPopup() {
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--muted)" }}>
-                Any ideas for new images?
+                Des idées pour de nouvelles images ?
               </p>
               <button
                 onClick={() => setIsOpen(false)}
@@ -110,7 +110,7 @@ export default function SuggestionPopup() {
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <input
                 type="text"
-                placeholder="Your name (optional)"
+                placeholder="Votre nom (optionnel)"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={60}
@@ -118,7 +118,7 @@ export default function SuggestionPopup() {
                 style={inpStyle}
               />
               <textarea
-                placeholder="Describe what you'd like to see..."
+                placeholder="Décrivez ce que vous aimeriez voir..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 maxLength={500}
@@ -127,8 +127,8 @@ export default function SuggestionPopup() {
                 className={`${inpClass} resize-none`}
                 style={inpStyle}
               />
-              {error && <p style={{ fontSize: "11px", color: "red" }}>{error}</p>}
-              {success && <p style={{ fontSize: "11px", color: "green" }}>Thank you for your suggestion!</p>}
+              {error && <p style={{ fontSize: "11px", color: "red" }}>Échec de l'envoi. Veuillez réessayer.</p>}
+              {success && <p style={{ fontSize: "11px", color: "green" }}>Merci pour votre suggestion !</p>}
               <button
                 type="submit"
                 disabled={submitting || !content.trim()}
@@ -154,7 +154,7 @@ export default function SuggestionPopup() {
                   e.currentTarget.style.color = "var(--text)";
                 }}
               >
-                {submitting ? "Submitting..." : "Submit Idea"}
+                {submitting ? "Envoi..." : "Envoyer"}
               </button>
             </form>
           </div>
