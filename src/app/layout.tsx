@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import SuggestionPopup from "./SuggestionPopup";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
@@ -41,6 +42,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           © {new Date().getFullYear()} Ciselure
         </footer>
+
+        <SuggestionPopup />
       </body>
     </html>
   );

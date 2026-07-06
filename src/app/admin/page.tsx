@@ -12,6 +12,13 @@ interface GalleryImage {
   _count: { comments: number };
 }
 
+interface Suggestion {
+  id: number;
+  name: string | null;
+  content: string;
+  createdAt: string;
+}
+
 const inp = "w-full border px-4 py-3 text-sm font-light outline-none transition-colors focus:border-[var(--text)] rounded-none";
 const inpStyle = { background: "var(--bg)", borderColor: "var(--border)", color: "var(--text)" };
 
@@ -23,6 +30,8 @@ export default function AdminPage() {
 
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -81,7 +90,27 @@ export default function AdminPage() {
     }
   }
 
-  useEffect(() => { if (authenticated) loadImages(); }, [authenticated]);
+  async function loadSuggestions() {
+    setLoadingSuggestions(true);
+    try {
+      const res = await fetch("/api/suggestions", {
+        headers: { "x-admin-password": password },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSuggestions(Array.isArray(data) ? data : []);
+      }
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  }
+
+  useEffect(() => {
+    if (authenticated) {
+      loadImages();
+      loadSuggestions();
+    }
+  }, [authenticated]);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
@@ -253,6 +282,49 @@ export default function AdminPage() {
                     </button>
                   </div>
                 </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* User Suggestions */}
+      <div className="mt-10 sm:mt-14">
+        <p className="mb-6 text-[10px] uppercase tracking-[0.35em]" style={{ color: "var(--muted)" }}>
+          User Suggestions ({suggestions.length})
+        </p>
+        {loadingSuggestions ? (
+          <div style={{ padding: "16px", border: "1px solid var(--border)" }}>
+            <p className="text-sm" style={{ color: "var(--faint)" }}>Loading...</p>
+          </div>
+        ) : suggestions.length === 0 ? (
+          <p className="text-sm" style={{ color: "var(--faint)" }}>No suggestions yet.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {suggestions.map((suggestion) => (
+              <div
+                key={suggestion.id}
+                style={{
+                  border: "1px solid var(--border)",
+                  padding: "16px",
+                  background: "var(--bg-card)",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--text)" }}>
+                    {suggestion.name || "Anonymous"}
+                  </span>
+                  <span style={{ fontSize: "10px", color: "var(--faint)" }}>
+                    {new Date(suggestion.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+                <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.6 }}>
+                  {suggestion.content}
+                </p>
               </div>
             ))}
           </div>

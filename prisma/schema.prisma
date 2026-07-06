@@ -24,3 +24,10 @@ model Comment {
   imageId   Int
   image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
 }
+
+model Suggestion {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  content   String
+  createdAt DateTime @default(now())
+}
