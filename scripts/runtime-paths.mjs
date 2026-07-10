@@ -1,26 +1,24 @@
 import { mkdir } from "fs/promises";
 import path from "path";
 
-export async function resolveRuntimePaths(projectRoot, isProduction) {
-  if (process.env.DATABASE_URL && process.env.UPLOAD_DIR) {
+export function isTursoConfigured() {
+  return Boolean(process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN);
+}
+
+export async function resolveUploadDir(projectRoot, isProduction) {
+  if (process.env.UPLOAD_DIR) {
     await mkdir(process.env.UPLOAD_DIR, { recursive: true });
-    return {
-      databaseUrl: process.env.DATABASE_URL,
-      uploadDir: process.env.UPLOAD_DIR,
-    };
+    return process.env.UPLOAD_DIR;
   }
 
   const candidates = isProduction
-    ? ["/data", path.join(projectRoot, ".data")]
+    ? ["/data", path.join(projectRoot, ".data", "uploads")]
     : [path.join(projectRoot, "public", "uploads")];
-
-  let dataDir = null;
 
   for (const candidate of candidates) {
     try {
       await mkdir(candidate, { recursive: true });
-      dataDir = candidate;
-      break;
+      return candidate;
     } catch (error) {
       if (error.code === "EACCES" || error.code === "EPERM" || error.code === "ENOENT") {
         console.warn(`Cannot write to ${candidate}, trying next location...`);
@@ -30,21 +28,5 @@ export async function resolveRuntimePaths(projectRoot, isProduction) {
     }
   }
 
-  if (!dataDir) {
-    throw new Error("Could not find a writable directory for database and uploads.");
-  }
-
-  if (isProduction) {
-    const uploadDir = path.join(dataDir, "uploads");
-    await mkdir(uploadDir, { recursive: true });
-    return {
-      databaseUrl: `file:${path.join(dataDir, "dev.db")}`,
-      uploadDir,
-    };
-  }
-
-  return {
-    databaseUrl: "file:./dev.db",
-    uploadDir: dataDir,
-  };
+  throw new Error("Could not find a writable directory for uploads.");
 }
