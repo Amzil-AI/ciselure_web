@@ -1,15 +1,19 @@
 import { execSync } from "child_process";
-import { access, cp, mkdir } from "fs/promises";
+import { access, cp } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import { resolveRuntimePaths } from "./runtime-paths.mjs";
 
 const isProduction = process.env.NODE_ENV === "production";
 const projectRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-process.env.DATABASE_URL ??= isProduction ? "file:/data/dev.db" : "file:./dev.db";
-process.env.UPLOAD_DIR ??= isProduction ? "/data/uploads" : "public/uploads";
+const { databaseUrl, uploadDir } = await resolveRuntimePaths(projectRoot, isProduction);
 
-await mkdir(process.env.UPLOAD_DIR, { recursive: true });
+process.env.DATABASE_URL = databaseUrl;
+process.env.UPLOAD_DIR = uploadDir;
+
+console.log(`Using DATABASE_URL=${process.env.DATABASE_URL}`);
+console.log(`Using UPLOAD_DIR=${process.env.UPLOAD_DIR}`);
 
 for (const file of ["sample-1.jpeg", "sample-2.jpeg"]) {
   const src = path.join(projectRoot, "public", "uploads", file);
