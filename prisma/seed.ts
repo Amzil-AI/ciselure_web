@@ -1,4 +1,5 @@
 import { createPrismaClient } from "../src/lib/create-prisma-client";
+import { storeLocalFile } from "../src/lib/storage";
 
 const prisma = createPrismaClient();
 
@@ -9,17 +10,20 @@ async function main() {
     return;
   }
 
+  const sample1 = await storeLocalFile("public/uploads/sample-1.jpeg");
+  const sample2 = await storeLocalFile("public/uploads/sample-2.jpeg");
+
   await prisma.image.createMany({
     data: [
       {
         title: "Ethereal Bloom",
         description: "A dreamlike floral composition generated with diffusion models.",
-        filename: "sample-1.jpeg",
+        filename: sample1,
       },
       {
         title: "Urban Mirage",
         description: "Cityscapes reimagined through the lens of generative AI.",
-        filename: "sample-2.jpeg",
+        filename: sample2,
       },
     ],
   });

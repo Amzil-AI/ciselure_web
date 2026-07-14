@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { UPLOAD_DIR } from "@/lib/config";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { storeImage } from "@/lib/storage";
 
 export async function GET() {
   try {
@@ -34,13 +32,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "File and title are required" }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const ext = file.name.split(".").pop() ?? "jpg";
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const uploadDir = UPLOAD_DIR;
-    await writeFile(path.join(uploadDir, filename), buffer);
+    const filename = await storeImage(file);
 
     const image = await prisma.image.create({
       data: { title, description: description ?? null, filename },

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getImageUrl } from "@/lib/image-url";
 
 export interface GalleryImage {
   id: number;
@@ -30,7 +31,7 @@ export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
           {/* Image */}
           <div style={{ width: "100%", border: "1px solid var(--border)", overflow: "hidden", background: "var(--bg-card)" }}>
             <Image
-              src={`/api/uploads/${img.filename}`}
+              src={getImageUrl(img.filename)}
               alt={img.title}
               width={800}
               height={800}

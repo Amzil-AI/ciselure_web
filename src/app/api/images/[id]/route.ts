@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function GET(
   _request: NextRequest,
@@ -21,7 +22,7 @@ export async function GET(
 
     return NextResponse.json(image);
   } catch {
-    return NextResponse.json({ error: "Failed to fetch image" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch image" }, { status: 404 });
   }
 }
 
@@ -38,6 +39,15 @@ export async function DELETE(
 
   const { id } = await params;
   try {
+    const image = await prisma.image.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!image) {
+      return NextResponse.json({ error: "Image not found" }, { status: 404 });
+    }
+
+    await deleteFromCloudinary(image.filename);
     await prisma.image.delete({ where: { id: parseInt(id) } });
     return NextResponse.json({ success: true });
   } catch {

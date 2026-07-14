@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getImageUrl } from "@/lib/image-url";
 
 interface GalleryImage {
   id: number;
@@ -266,7 +267,7 @@ export default function AdminPage() {
               <div key={img.id} className="group relative" style={{ background: "var(--bg)" }}>
                 <Link href={`/gallery/${img.id}`}>
                   <Image
-                    src={`/api/uploads/${img.filename}`}
+                    src={getImageUrl(img.filename)}
                     alt={img.title}
                     width={400}
                     height={400}

@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getImageUrl } from "@/lib/image-url";
 
 interface Comment {
   id: number;
@@ -110,7 +111,7 @@ export default function ImagePage({ params }: { params: Promise<{ id: string }> 
       {/* Image */}
       <div style={{ width: "100%", border: "1px solid var(--border)", overflow: "hidden", marginBottom: "20px" }}>
         <Image
-          src={`/api/uploads/${image.filename}`}
+          src={getImageUrl(image.filename)}
           alt={image.title}
           width={800}
           height={800}
