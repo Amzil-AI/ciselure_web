@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { storeImage } from "@/lib/storage";
 
+function isCloudinaryUrl(url: string) {
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname === "res.cloudinary.com";
+  } catch {
+    return false;
+  }
+}
+
 export async function GET() {
   try {
     const images = await prisma.image.findMany({
@@ -23,6 +32,33 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const contentType = request.headers.get("content-type") ?? "";
+
+    if (contentType.includes("application/json")) {
+      const { title, description, imageUrl } = await request.json();
+
+      if (!title?.trim() || !imageUrl?.trim()) {
+        return NextResponse.json(
+          { error: "Title and image URL are required" },
+          { status: 400 }
+        );
+      }
+
+      if (!isCloudinaryUrl(imageUrl)) {
+        return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
+      }
+
+      const image = await prisma.image.create({
+        data: {
+          title: title.trim(),
+          description: description?.trim() || null,
+          filename: imageUrl.trim(),
+        },
+      });
+
+      return NextResponse.json(image, { status: 201 });
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const title = formData.get("title") as string | null;

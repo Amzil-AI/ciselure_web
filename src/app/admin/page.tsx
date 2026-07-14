@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getImageUrl } from "@/lib/image-url";
+import {
+  isDirectCloudinaryUploadEnabled,
+  uploadImageToCloudinary,
+} from "@/lib/upload-client";
 
 interface GalleryImage {
   id: number;
@@ -119,17 +123,35 @@ export default function AdminPage() {
     setUploading(true);
     setUploadError("");
     setUploadSuccess("");
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("title", title.trim());
-    if (description.trim()) formData.append("description", description.trim());
     try {
-      const res = await fetch("/api/images", {
-        method: "POST",
-        headers: { "x-admin-password": password },
-        body: formData,
-      });
-      if (!res.ok) throw new Error();
+      if (isDirectCloudinaryUploadEnabled()) {
+        const imageUrl = await uploadImageToCloudinary(file);
+        const res = await fetch("/api/images", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-password": password,
+          },
+          body: JSON.stringify({
+            title: title.trim(),
+            description: description.trim() || null,
+            imageUrl,
+          }),
+        });
+        if (!res.ok) throw new Error();
+      } else {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("title", title.trim());
+        if (description.trim()) formData.append("description", description.trim());
+        const res = await fetch("/api/images", {
+          method: "POST",
+          headers: { "x-admin-password": password },
+          body: formData,
+        });
+        if (!res.ok) throw new Error();
+      }
+
       setUploadSuccess("Uploaded successfully.");
       setTitle(""); setDescription(""); setFile(null); setPreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
