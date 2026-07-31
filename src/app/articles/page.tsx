@@ -70,7 +70,7 @@ export default async function ArticlesPage() {
         </div>
 
         <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.7, marginBottom: "40px" }}>
-          Créez un post autour d’un soin, générez une légende + un article en français, et ajoutez des images à partager.
+          Créez un post autour d’un soin du Centre Ciselure (Hydrafacial, injections, épilation…), générez une légende + un article en français, et ajoutez des images à partager.
         </p>
 
         {posts.length === 0 ? (

@@ -177,10 +177,10 @@ export default function AdminPage() {
       <div style={{ minHeight: "90vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 24px" }}>
         <div style={{ maxWidth: "320px", width: "100%", margin: "0 auto" }}>
           <p className="mb-2 text-center text-[10px] uppercase tracking-[0.4em]" style={{ color: "var(--faint)" }}>
-            Admin Access
+            Accès admin
           </p>
           <h1 className="mb-8 text-center text-2xl font-thin tracking-widest" style={{ color: "var(--text)" }}>
-            Ciselure Studio
+            Studio Ciselure
           </h1>
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <input

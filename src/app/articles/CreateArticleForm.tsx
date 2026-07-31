@@ -163,14 +163,14 @@ export default function CreateArticleForm() {
   return (
     <form onSubmit={handlePublish} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.7, marginBottom: "8px" }}>
-        Indiquez un soin ou une idée (ex. Hydrafacial), générez une légende + un article en français avec l’IA,
-        puis ajoutez vos photos ou choisissez-en dans la galerie.
+        Indiquez un soin du centre (ex. Hydrafacial, Skinbooster, peeling…), générez une légende + un article en français,
+        puis ajoutez vos photos ou choisissez-en dans la galerie — pour les réseaux de Médecine Esthétique Ciselure.
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <input
           type="text"
-          placeholder="Sujet — ex. Hydrafacial"
+          placeholder="Sujet — ex. Hydrafacial, HIFU, peeling…"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
           required

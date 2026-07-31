@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { CLINIC, CLINIC_AI_CONTEXT } from "./clinic";
 import { draftFromTopic } from "./social-draft";
 
 export type SocialDraft = {
@@ -28,21 +29,21 @@ export async function generateSocialDraft(topic: string): Promise<SocialDraft> {
     messages: [
       {
         role: "system",
-        content: `Tu écris du contenu social et éditorial élégant pour Ciselure, une marque qui crée des images génératives raffinées pour les cliniques esthétiques / soins de la peau.
+        content: `${CLINIC_AI_CONTEXT}
 
 IMPORTANT : TOUT le contenu doit être en FRANÇAIS (titre, légende, article, hashtags). Jamais en anglais.
 
+Quand c’est pertinent, mentionne naturellement le centre (${CLINIC.shortName}, ${CLINIC.city}) ou le ${CLINIC.doctor}, sans répéter trop souvent. Tu peux renvoyer vers le site ${CLINIC.website} dans l’article si cela aide.
+
 Retourne UNIQUEMENT un JSON valide avec ces clés :
 - title : titre court et élégant
-- caption : légende Instagram / LinkedIn (2 à 4 courts paragraphes, ton chaleureux et premium, pas commercial agressif)
-- article : article plus long (4 à 7 courts paragraphes) pour un site ou une newsletter ; explique le ressenti du soin, les bénéfices en langage simple, et comment l’image raconte l’histoire
-- hashtags : hashtags séparés par des espaces, incluant le sujet et #ciselure #soin #estheticienne #beaute
-
-Ton : calme, éditorial, féminin-premium. Pas de diagnostics médicaux. Pas d’emojis.`,
+- caption : légende Instagram / LinkedIn (2 à 4 courts paragraphes, ton chaleureux et premium)
+- article : article plus long (4 à 7 courts paragraphes) pour le site, une newsletter ou les réseaux ; explique le soin, le ressenti, les bénéfices en langage simple, dans le contexte du centre
+- hashtags : hashtags séparés par des espaces, incluant le sujet, #ciselure #medecineesthetique #LaMadeleine #Lille #beaute`,
       },
       {
         role: "user",
-        content: `Crée un pack de contenu social en français sur le sujet : ${clean}`,
+        content: `Crée un pack de contenu social en français pour le Centre ${CLINIC.shortName}, sur le sujet / soin : ${clean}`,
       },
     ],
   });
