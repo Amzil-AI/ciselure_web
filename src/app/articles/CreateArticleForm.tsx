@@ -1,14 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/image-url";
+import {
+  isDirectCloudinaryUploadEnabled,
+  uploadImageToCloudinary,
+} from "@/lib/upload-client";
 
 interface GalleryImage {
   id: number;
   title: string;
   filename: string;
+}
+
+interface UploadedPicture {
+  id: string;
+  preview: string;
+  url: string;
+  name: string;
 }
 
 const inp =
@@ -21,6 +32,7 @@ const inpStyle = {
 
 export default function CreateArticleForm() {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [topic, setTopic] = useState("");
   const [title, setTitle] = useState("");
@@ -28,6 +40,8 @@ export default function CreateArticleForm() {
   const [article, setArticle] = useState("");
   const [hashtags, setHashtags] = useState("");
   const [selectedImageIds, setSelectedImageIds] = useState<number[]>([]);
+  const [uploadedPictures, setUploadedPictures] = useState<UploadedPicture[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -44,6 +58,43 @@ export default function CreateArticleForm() {
     setSelectedImageIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
+  }
+
+  function removeUploaded(id: string) {
+    setUploadedPictures((prev) => prev.filter((p) => p.id !== id));
+  }
+
+  async function handleFilesSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+
+    if (!isDirectCloudinaryUploadEnabled()) {
+      setError("Image upload is not configured yet.");
+      return;
+    }
+
+    setUploadingFiles(true);
+    setError("");
+    try {
+      const next: UploadedPicture[] = [];
+      for (const file of files.slice(0, 8)) {
+        if (!file.type.startsWith("image/")) continue;
+        const url = await uploadImageToCloudinary(file);
+        next.push({
+          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          preview: URL.createObjectURL(file),
+          url,
+          name: file.name,
+        });
+      }
+      setUploadedPictures((prev) => [...prev, ...next].slice(0, 8));
+      setSuccess(`${next.length} picture${next.length === 1 ? "" : "s"} added.`);
+    } catch {
+      setError("Could not upload pictures. Please try again.");
+    } finally {
+      setUploadingFiles(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   }
 
   async function generateDraft() {
@@ -66,7 +117,7 @@ export default function CreateArticleForm() {
       setCaption(data.caption ?? "");
       setArticle(data.article ?? "");
       setHashtags(data.hashtags ?? "");
-      setSuccess("Draft ready — edit it, pick pictures, then publish.");
+      setSuccess("Draft ready — edit it, add pictures, then publish.");
     } catch {
       setError("Could not generate draft. Please try again.");
     } finally {
@@ -92,6 +143,10 @@ export default function CreateArticleForm() {
           article: article.trim(),
           hashtags: hashtags.trim() || null,
           imageIds: selectedImageIds,
+          newImages: uploadedPictures.map((p) => ({
+            title: title.trim() || topic.trim(),
+            imageUrl: p.url,
+          })),
         }),
       });
       const data = await res.json();
@@ -103,11 +158,13 @@ export default function CreateArticleForm() {
     }
   }
 
+  const pictureCount = selectedImageIds.length + uploadedPictures.length;
+
   return (
     <form onSubmit={handlePublish} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.7, marginBottom: "8px" }}>
         Type a treatment or idea (e.g. Hydrafacial), generate a social caption + article with AI,
-        then link pictures from the gallery to share.
+        then add your own pictures or pick from the gallery.
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -189,9 +246,83 @@ export default function CreateArticleForm() {
         style={inpStyle}
       />
 
+      {/* Upload new pictures */}
       <div>
         <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--muted)", marginBottom: "10px" }}>
-          Link pictures ({selectedImageIds.length} selected)
+          Add pictures ({pictureCount})
+        </p>
+
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadingFiles || uploadedPictures.length >= 8}
+          style={{
+            width: "100%",
+            border: "1px dashed var(--border)",
+            background: "var(--bg-card)",
+            padding: "28px 16px",
+            cursor: "pointer",
+            marginBottom: "12px",
+            opacity: uploadingFiles ? 0.5 : 1,
+          }}
+        >
+          <p style={{ fontSize: "13px", color: "var(--muted)" }}>
+            {uploadingFiles ? "Uploading…" : "Click to upload pictures"}
+          </p>
+          <p style={{ fontSize: "11px", color: "var(--faint)", marginTop: "4px" }}>
+            JPG · PNG · WEBP · GIF — up to 8
+          </p>
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleFilesSelected}
+          style={{ display: "none" }}
+        />
+
+        {uploadedPictures.length > 0 && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginBottom: "16px" }}>
+            {uploadedPictures.map((pic) => (
+              <div
+                key={pic.id}
+                style={{
+                  position: "relative",
+                  border: "1px solid var(--border)",
+                  overflow: "hidden",
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={pic.preview}
+                  alt={pic.name}
+                  style={{ width: "100%", aspectRatio: "1", objectFit: "cover", display: "block" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeUploaded(pic.id)}
+                  style={{
+                    position: "absolute",
+                    top: 4,
+                    right: 4,
+                    border: "none",
+                    background: "rgba(44,37,32,0.75)",
+                    color: "#fff",
+                    fontSize: "10px",
+                    padding: "4px 6px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--faint)", marginBottom: "10px" }}>
+          Or pick from gallery
         </p>
         {galleryImages.length === 0 ? (
           <p style={{ fontSize: "12px", color: "var(--faint)" }}>No gallery images yet.</p>
@@ -245,7 +376,7 @@ export default function CreateArticleForm() {
 
       <button
         type="submit"
-        disabled={saving}
+        disabled={saving || uploadingFiles}
         style={{
           border: "1px solid var(--text)",
           color: "var(--text)",
@@ -255,7 +386,7 @@ export default function CreateArticleForm() {
           textTransform: "uppercase",
           letterSpacing: "0.15em",
           cursor: "pointer",
-          opacity: saving ? 0.4 : 1,
+          opacity: saving || uploadingFiles ? 0.4 : 1,
         }}
       >
         {saving ? "Publishing…" : "Publish"}

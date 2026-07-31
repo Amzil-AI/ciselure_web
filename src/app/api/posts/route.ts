@@ -8,6 +8,15 @@ const postInclude = {
   },
 };
 
+function isCloudinaryUrl(url: string) {
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname === "res.cloudinary.com";
+  } catch {
+    return false;
+  }
+}
+
 export async function GET() {
   try {
     const posts = await prisma.socialPost.findMany({
@@ -35,12 +44,35 @@ export async function POST(request: NextRequest) {
           .slice(0, 12)
       : [];
 
+    const newImagesRaw = Array.isArray(body.newImages) ? body.newImages : [];
+    const newImages = newImagesRaw
+      .slice(0, 8)
+      .map((item: { title?: unknown; imageUrl?: unknown }) => ({
+        title: String(item?.title ?? title).trim().slice(0, 120) || title,
+        imageUrl: String(item?.imageUrl ?? "").trim(),
+      }))
+      .filter((item: { imageUrl: string }) => isCloudinaryUrl(item.imageUrl));
+
     if (!topic || !title || !caption || !article) {
       return NextResponse.json(
         { error: "Topic, title, caption, and article are required" },
         { status: 400 }
       );
     }
+
+    const createdImageIds: number[] = [];
+    for (const item of newImages) {
+      const image = await prisma.image.create({
+        data: {
+          title: item.title,
+          description: `Shared with article: ${topic}`,
+          filename: item.imageUrl,
+        },
+      });
+      createdImageIds.push(image.id);
+    }
+
+    const allImageIds = [...createdImageIds, ...imageIds].slice(0, 12);
 
     const post = await prisma.socialPost.create({
       data: {
@@ -50,7 +82,7 @@ export async function POST(request: NextRequest) {
         article,
         hashtags,
         images: {
-          create: imageIds.map((imageId, index) => ({
+          create: allImageIds.map((imageId, index) => ({
             imageId,
             sortOrder: index,
           })),
