@@ -32,14 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="transition-opacity hover:opacity-70">Galerie</Link>
               <Link href="/articles" className="transition-opacity hover:opacity-70">Articles</Link>
               <Link href="/articles/new" className="transition-opacity hover:opacity-70">Créer</Link>
-              <a
-                href={CLINIC.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-70"
-              >
-                Site
-              </a>
               <Link href="/admin" className="transition-opacity hover:opacity-70">Admin</Link>
             </nav>
           </div>
