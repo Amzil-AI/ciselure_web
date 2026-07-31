@@ -29,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
             <nav className="flex items-center gap-5 text-[10px] tracking-widest uppercase sm:gap-8 sm:text-xs" style={{ color: "var(--muted)" }}>
               <Link href="/" className="transition-opacity hover:opacity-70">Gallery</Link>
+              <Link href="/articles" className="transition-opacity hover:opacity-70">Articles</Link>
               <Link href="/admin" className="transition-opacity hover:opacity-70">Admin</Link>
             </nav>
           </div>

@@ -8,12 +8,13 @@ datasource db {
 }
 
 model Image {
-  id          Int       @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   title       String
   description String?
   filename    String
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime         @default(now())
   comments    Comment[]
+  socialPosts SocialPostImage[]
 }
 
 model Comment {
@@ -30,4 +31,27 @@ model Suggestion {
   name      String?
   content   String
   createdAt DateTime @default(now())
+}
+
+model SocialPost {
+  id        Int              @id @default(autoincrement())
+  topic     String
+  title     String
+  caption   String
+  article   String
+  hashtags  String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  images    SocialPostImage[]
+}
+
+model SocialPostImage {
+  id           Int        @id @default(autoincrement())
+  socialPostId Int
+  imageId      Int
+  sortOrder    Int        @default(0)
+  socialPost   SocialPost @relation(fields: [socialPostId], references: [id], onDelete: Cascade)
+  image        Image      @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@unique([socialPostId, imageId])
 }
