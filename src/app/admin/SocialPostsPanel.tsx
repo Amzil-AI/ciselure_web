@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getImageUrl } from "@/lib/image-url";
-import { draftFromTopic } from "@/lib/social-draft";
 
 interface GalleryImage {
   id: number;
@@ -49,6 +48,7 @@ export default function SocialPostsPanel({
   const [hashtags, setHashtags] = useState("");
   const [selectedImageIds, setSelectedImageIds] = useState<number[]>([]);
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [copied, setCopied] = useState("");
@@ -80,18 +80,39 @@ export default function SocialPostsPanel({
     setSuccess("");
   }
 
-  function fillDraft() {
+  async function fillDraft() {
     if (!topic.trim()) {
       setError("Enter a topic first (e.g. Hydrafacial).");
       return;
     }
-    const draft = draftFromTopic(topic);
-    setTitle(draft.title);
-    setCaption(draft.caption);
-    setArticle(draft.article);
-    setHashtags(draft.hashtags);
+    setGenerating(true);
     setError("");
-    setSuccess("Draft filled — edit it, pick pictures, then save.");
+    setSuccess("");
+    try {
+      const res = await fetch("/api/posts/draft", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-password": password,
+        },
+        body: JSON.stringify({ topic: topic.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed");
+      setTitle(data.title ?? "");
+      setCaption(data.caption ?? "");
+      setArticle(data.article ?? "");
+      setHashtags(data.hashtags ?? "");
+      setSuccess(
+        data.source === "openai"
+          ? "AI draft ready — edit it, pick pictures, then save."
+          : "Draft filled (no OpenAI key — using template). Add OPENAI_API_KEY for AI."
+      );
+    } catch {
+      setError("Could not generate draft. Check your OpenAI API key.");
+    } finally {
+      setGenerating(false);
+    }
   }
 
   function toggleImage(id: number) {
@@ -194,7 +215,7 @@ export default function SocialPostsPanel({
       </div>
 
       <p className="mb-6 text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
-        Create content around a treatment (e.g. Hydrafacial): generate a draft article + social caption,
+        Create content around a treatment (e.g. Hydrafacial): generate an AI article + social caption,
         attach gallery pictures, then share or copy for Instagram / LinkedIn.
       </p>
 
@@ -220,10 +241,11 @@ export default function SocialPostsPanel({
           <button
             type="button"
             onClick={fillDraft}
-            className="shrink-0 border px-4 py-3 text-[10px] uppercase tracking-widest transition-colors"
+            disabled={generating}
+            className="shrink-0 border px-4 py-3 text-[10px] uppercase tracking-widest transition-colors disabled:opacity-40"
             style={{ borderColor: "var(--text)", color: "var(--text)" }}
           >
-            Fill draft
+            {generating ? "Generating…" : "Generate with AI"}
           </button>
         </div>
 
