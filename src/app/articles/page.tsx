@@ -20,34 +20,67 @@ export default async function ArticlesPage() {
   return (
     <div style={{ width: "100%", paddingTop: "80px", paddingBottom: "96px" }}>
       <div style={{ maxWidth: "520px", margin: "0 auto", padding: "0 24px" }}>
-        <p
+        <div
           style={{
-            fontSize: "10px",
-            textTransform: "uppercase",
-            letterSpacing: "0.35em",
-            color: "var(--faint)",
-            marginBottom: "8px",
-          }}
-        >
-          Social & editorial
-        </p>
-        <h1
-          style={{
-            fontSize: "28px",
-            fontWeight: 200,
-            letterSpacing: "0.12em",
-            color: "var(--text)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            gap: "16px",
             marginBottom: "12px",
           }}
         >
-          Articles
-        </h1>
+          <div>
+            <p
+              style={{
+                fontSize: "10px",
+                textTransform: "uppercase",
+                letterSpacing: "0.35em",
+                color: "var(--faint)",
+                marginBottom: "8px",
+              }}
+            >
+              Social & editorial
+            </p>
+            <h1
+              style={{
+                fontSize: "28px",
+                fontWeight: 200,
+                letterSpacing: "0.12em",
+                color: "var(--text)",
+              }}
+            >
+              Articles
+            </h1>
+          </div>
+          <Link
+            href="/articles/new"
+            style={{
+              border: "1px solid var(--text)",
+              color: "var(--text)",
+              padding: "10px 14px",
+              fontSize: "10px",
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              textDecoration: "none",
+              flexShrink: 0,
+            }}
+          >
+            Create
+          </Link>
+        </div>
+
         <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.7, marginBottom: "40px" }}>
-          Treatment stories, captions, and visuals ready to share.
+          Create a post around a treatment, generate a caption + article, and link pictures to share.
         </p>
 
         {posts.length === 0 ? (
-          <p style={{ fontSize: "13px", color: "var(--faint)" }}>No articles yet.</p>
+          <p style={{ fontSize: "13px", color: "var(--faint)" }}>
+            No articles yet.{" "}
+            <Link href="/articles/new" style={{ color: "var(--muted)", textDecoration: "underline" }}>
+              Create the first one
+            </Link>
+            .
+          </p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
             {posts.map((post) => {

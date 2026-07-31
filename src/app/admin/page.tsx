@@ -8,7 +8,7 @@ import {
   isDirectCloudinaryUploadEnabled,
   uploadImageToCloudinary,
 } from "@/lib/upload-client";
-import SocialPostsPanel from "./SocialPostsPanel";
+import AdminPostsModeration from "./AdminPostsModeration";
 
 interface GalleryImage {
   id: number;
@@ -312,7 +312,7 @@ export default function AdminPage() {
         )}
       </div>
 
-      <SocialPostsPanel password={password} galleryImages={images} />
+      <AdminPostsModeration password={password} />
 
       {/* User Suggestions */}
       <div className="mt-10 sm:mt-14">

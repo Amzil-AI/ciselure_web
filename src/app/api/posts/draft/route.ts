@@ -2,16 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateSocialDraft } from "@/lib/openai-draft";
 
 export async function POST(request: NextRequest) {
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "ciselure2026";
-  const authHeader = request.headers.get("x-admin-password");
-
-  if (authHeader !== adminPassword) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
     const body = await request.json();
-    const topic = String(body.topic ?? "").trim();
+    const topic = String(body.topic ?? "").trim().slice(0, 80);
 
     if (!topic) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 });
@@ -25,7 +18,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Draft generation failed:", error);
     return NextResponse.json(
-      { error: "Failed to generate draft. Check your OpenAI API key." },
+      { error: "Failed to generate draft. Please try again." },
       { status: 500 }
     );
   }

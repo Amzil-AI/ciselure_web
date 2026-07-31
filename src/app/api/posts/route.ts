@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-function unauthorized() {
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-}
-
-function checkAdmin(request: NextRequest) {
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "ciselure2026";
-  return request.headers.get("x-admin-password") === adminPassword;
-}
-
 const postInclude = {
   images: {
     orderBy: { sortOrder: "asc" as const },
@@ -30,17 +21,18 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  if (!checkAdmin(request)) return unauthorized();
-
   try {
     const body = await request.json();
-    const topic = String(body.topic ?? "").trim();
-    const title = String(body.title ?? "").trim();
-    const caption = String(body.caption ?? "").trim();
-    const article = String(body.article ?? "").trim();
-    const hashtags = body.hashtags ? String(body.hashtags).trim() : null;
+    const topic = String(body.topic ?? "").trim().slice(0, 80);
+    const title = String(body.title ?? "").trim().slice(0, 160);
+    const caption = String(body.caption ?? "").trim().slice(0, 2000);
+    const article = String(body.article ?? "").trim().slice(0, 12000);
+    const hashtags = body.hashtags ? String(body.hashtags).trim().slice(0, 400) : null;
     const imageIds: number[] = Array.isArray(body.imageIds)
-      ? body.imageIds.map((id: unknown) => Number(id)).filter((id: number) => !Number.isNaN(id))
+      ? body.imageIds
+          .map((id: unknown) => Number(id))
+          .filter((id: number) => !Number.isNaN(id))
+          .slice(0, 12)
       : [];
 
     if (!topic || !title || !caption || !article) {
