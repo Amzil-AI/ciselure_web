@@ -30,7 +30,7 @@ export default function CopyShareButton({ text }: { text: string }) {
         cursor: "pointer",
       }}
     >
-      {copied ? "Copied!" : "Copy caption for social"}
+      {copied ? "Copié !" : "Copier la légende"}
     </button>
   );
 }

@@ -28,9 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Ciselure
             </Link>
             <nav className="flex items-center gap-5 text-[10px] tracking-widest uppercase sm:gap-8 sm:text-xs" style={{ color: "var(--muted)" }}>
-              <Link href="/" className="transition-opacity hover:opacity-70">Gallery</Link>
+              <Link href="/" className="transition-opacity hover:opacity-70">Galerie</Link>
               <Link href="/articles" className="transition-opacity hover:opacity-70">Articles</Link>
-              <Link href="/articles/new" className="transition-opacity hover:opacity-70">Create</Link>
+              <Link href="/articles/new" className="transition-opacity hover:opacity-70">Créer</Link>
               <Link href="/admin" className="transition-opacity hover:opacity-70">Admin</Link>
             </nav>
           </div>

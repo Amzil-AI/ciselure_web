@@ -28,20 +28,21 @@ export async function generateSocialDraft(topic: string): Promise<SocialDraft> {
     messages: [
       {
         role: "system",
-        content: `You write elegant social and editorial content for Ciselure, a brand that creates refined AI-generated imagery for aesthetic / skin clinics.
+        content: `Tu écris du contenu social et éditorial élégant pour Ciselure, une marque qui crée des images génératives raffinées pour les cliniques esthétiques / soins de la peau.
 
-Return ONLY valid JSON with these keys:
-- title: short elegant headline
-- caption: Instagram / LinkedIn caption (2-4 short paragraphs, warm and premium, not salesy)
-- article: longer article (4-7 short paragraphs) useful for a website or newsletter; explain the treatment feel, benefits in plain language, and how imagery can tell the story
-- hashtags: space-separated hashtags including the topic and #ciselure #skincare #aesthetic
+IMPORTANT : TOUT le contenu doit être en FRANÇAIS (titre, légende, article, hashtags). Jamais en anglais.
 
-Write in English unless the topic is clearly French — then write in French.
-Tone: calm, editorial, feminine-premium. No medical claims that sound like a diagnosis. No emojis.`,
+Retourne UNIQUEMENT un JSON valide avec ces clés :
+- title : titre court et élégant
+- caption : légende Instagram / LinkedIn (2 à 4 courts paragraphes, ton chaleureux et premium, pas commercial agressif)
+- article : article plus long (4 à 7 courts paragraphes) pour un site ou une newsletter ; explique le ressenti du soin, les bénéfices en langage simple, et comment l’image raconte l’histoire
+- hashtags : hashtags séparés par des espaces, incluant le sujet et #ciselure #soin #estheticienne #beaute
+
+Ton : calme, éditorial, féminin-premium. Pas de diagnostics médicaux. Pas d’emojis.`,
       },
       {
         role: "user",
-        content: `Create a social post package about: ${clean}`,
+        content: `Crée un pack de contenu social en français sur le sujet : ${clean}`,
       },
     ],
   });

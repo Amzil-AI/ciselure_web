@@ -39,7 +39,7 @@ export default async function ArticlesPage() {
                 marginBottom: "8px",
               }}
             >
-              Social & editorial
+              Social & éditorial
             </p>
             <h1
               style={{
@@ -65,19 +65,19 @@ export default async function ArticlesPage() {
               flexShrink: 0,
             }}
           >
-            Create
+            Créer
           </Link>
         </div>
 
         <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.7, marginBottom: "40px" }}>
-          Create a post around a treatment, generate a caption + article, and link pictures to share.
+          Créez un post autour d’un soin, générez une légende + un article en français, et ajoutez des images à partager.
         </p>
 
         {posts.length === 0 ? (
           <p style={{ fontSize: "13px", color: "var(--faint)" }}>
-            No articles yet.{" "}
+            Pas encore d’articles.{" "}
             <Link href="/articles/new" style={{ color: "var(--muted)", textDecoration: "underline" }}>
-              Create the first one
+              Créer le premier
             </Link>
             .
           </p>

@@ -29,7 +29,7 @@ export default function NewArticlePage() {
             marginBottom: "8px",
           }}
         >
-          Create
+          Créer
         </p>
         <h1
           style={{
@@ -40,7 +40,7 @@ export default function NewArticlePage() {
             marginBottom: "28px",
           }}
         >
-          New post
+          Nouveau post
         </h1>
 
         <CreateArticleForm />

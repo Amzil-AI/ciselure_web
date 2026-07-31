@@ -106,7 +106,7 @@ export default async function ArticleDetailPage({
                   textDecoration: "underline",
                 }}
               >
-                Gallery
+                Galerie
               </Link>
             </div>
           </div>
@@ -129,7 +129,7 @@ export default async function ArticleDetailPage({
             marginBottom: "12px",
           }}
         >
-          Caption
+          Légende
         </p>
         <p
           style={{

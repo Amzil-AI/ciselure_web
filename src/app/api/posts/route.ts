@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       const image = await prisma.image.create({
         data: {
           title: item.title,
-          description: `Shared with article: ${topic}`,
+          description: `Partagé avec l’article : ${topic}`,
           filename: item.imageUrl,
         },
       });

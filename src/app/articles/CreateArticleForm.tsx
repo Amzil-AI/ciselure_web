@@ -69,7 +69,7 @@ export default function CreateArticleForm() {
     if (files.length === 0) return;
 
     if (!isDirectCloudinaryUploadEnabled()) {
-      setError("Image upload is not configured yet.");
+      setError("Le téléversement d’images n’est pas encore configuré.");
       return;
     }
 
@@ -88,9 +88,9 @@ export default function CreateArticleForm() {
         });
       }
       setUploadedPictures((prev) => [...prev, ...next].slice(0, 8));
-      setSuccess(`${next.length} picture${next.length === 1 ? "" : "s"} added.`);
+      setSuccess(`${next.length} image${next.length === 1 ? "" : "s"} ajoutée${next.length === 1 ? "" : "s"}.`);
     } catch {
-      setError("Could not upload pictures. Please try again.");
+      setError("Impossible d’ajouter les images. Réessayez.");
     } finally {
       setUploadingFiles(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -99,7 +99,7 @@ export default function CreateArticleForm() {
 
   async function generateDraft() {
     if (!topic.trim()) {
-      setError("Enter a topic first (e.g. Hydrafacial).");
+      setError("Indiquez d’abord un sujet (ex. Hydrafacial).");
       return;
     }
     setGenerating(true);
@@ -117,9 +117,9 @@ export default function CreateArticleForm() {
       setCaption(data.caption ?? "");
       setArticle(data.article ?? "");
       setHashtags(data.hashtags ?? "");
-      setSuccess("Draft ready — edit it, add pictures, then publish.");
+      setSuccess("Brouillon prêt — modifiez-le, ajoutez des photos, puis publiez.");
     } catch {
-      setError("Could not generate draft. Please try again.");
+      setError("Impossible de générer le brouillon. Réessayez.");
     } finally {
       setGenerating(false);
     }
@@ -153,7 +153,7 @@ export default function CreateArticleForm() {
       if (!res.ok) throw new Error(data.error || "Failed");
       router.push(`/articles/${data.id}`);
     } catch {
-      setError("Could not publish. Please try again.");
+      setError("Impossible de publier. Réessayez.");
       setSaving(false);
     }
   }
@@ -163,14 +163,14 @@ export default function CreateArticleForm() {
   return (
     <form onSubmit={handlePublish} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.7, marginBottom: "8px" }}>
-        Type a treatment or idea (e.g. Hydrafacial), generate a social caption + article with AI,
-        then add your own pictures or pick from the gallery.
+        Indiquez un soin ou une idée (ex. Hydrafacial), générez une légende + un article en français avec l’IA,
+        puis ajoutez vos photos ou choisissez-en dans la galerie.
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <input
           type="text"
-          placeholder="Topic — e.g. Hydrafacial"
+          placeholder="Sujet — ex. Hydrafacial"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
           required
@@ -193,13 +193,13 @@ export default function CreateArticleForm() {
             opacity: generating ? 0.4 : 1,
           }}
         >
-          {generating ? "Generating…" : "Generate with AI"}
+          {generating ? "Génération…" : "Générer avec l’IA"}
         </button>
       </div>
 
       <input
         type="text"
-        placeholder="Title"
+        placeholder="Titre"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
@@ -209,10 +209,10 @@ export default function CreateArticleForm() {
 
       <div>
         <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--faint)", marginBottom: "8px" }}>
-          Social caption
+          Légende réseaux sociaux
         </p>
         <textarea
-          placeholder="Caption for Instagram / LinkedIn…"
+          placeholder="Légende pour Instagram / LinkedIn…"
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           required
@@ -227,7 +227,7 @@ export default function CreateArticleForm() {
           Article
         </p>
         <textarea
-          placeholder="Longer article…"
+          placeholder="Article plus long…"
           value={article}
           onChange={(e) => setArticle(e.target.value)}
           required
@@ -239,7 +239,7 @@ export default function CreateArticleForm() {
 
       <input
         type="text"
-        placeholder="Hashtags — #hydrafacial #skincare"
+        placeholder="Hashtags — #hydrafacial #soin"
         value={hashtags}
         onChange={(e) => setHashtags(e.target.value)}
         className={inp}
@@ -249,7 +249,7 @@ export default function CreateArticleForm() {
       {/* Upload new pictures */}
       <div>
         <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--muted)", marginBottom: "10px" }}>
-          Add pictures ({pictureCount})
+          Ajouter des images ({pictureCount})
         </p>
 
         <button
@@ -267,10 +267,10 @@ export default function CreateArticleForm() {
           }}
         >
           <p style={{ fontSize: "13px", color: "var(--muted)" }}>
-            {uploadingFiles ? "Uploading…" : "Click to upload pictures"}
+            {uploadingFiles ? "Téléversement…" : "Cliquez pour ajouter des images"}
           </p>
           <p style={{ fontSize: "11px", color: "var(--faint)", marginTop: "4px" }}>
-            JPG · PNG · WEBP · GIF — up to 8
+            JPG · PNG · WEBP · GIF — jusqu’à 8
           </p>
         </button>
         <input
@@ -314,7 +314,7 @@ export default function CreateArticleForm() {
                     cursor: "pointer",
                   }}
                 >
-                  Remove
+                  Retirer
                 </button>
               </div>
             ))}
@@ -322,10 +322,10 @@ export default function CreateArticleForm() {
         )}
 
         <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--faint)", marginBottom: "10px" }}>
-          Or pick from gallery
+          Ou choisir dans la galerie
         </p>
         {galleryImages.length === 0 ? (
-          <p style={{ fontSize: "12px", color: "var(--faint)" }}>No gallery images yet.</p>
+          <p style={{ fontSize: "12px", color: "var(--faint)" }}>Pas encore d’images dans la galerie.</p>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
             {galleryImages.map((img) => {
@@ -389,7 +389,7 @@ export default function CreateArticleForm() {
           opacity: saving || uploadingFiles ? 0.4 : 1,
         }}
       >
-        {saving ? "Publishing…" : "Publish"}
+        {saving ? "Publication…" : "Publier"}
       </button>
     </form>
   );
